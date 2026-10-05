@@ -1,6 +1,7 @@
 import type { ResearchRequest } from "./types";
+import type { BrandSignals } from "./brand-scan";
 
-export function buildResearchPrompt(input: ResearchRequest) {
+export function buildResearchPrompt(input: ResearchRequest, brandSignals?: BrandSignals) {
   return [
     "You are the research and guide-strategy engine for Strictons Signature Hotel Guides.",
     "",
@@ -11,6 +12,16 @@ export function buildResearchPrompt(input: ResearchRequest) {
     "Website: " + input.website,
     "Location: " + input.location,
     "Additional notes: " + (input.notes?.trim() || "None provided"),
+    "",
+    "DIRECT WEBSITE BRAND SIGNALS",
+    brandSignals?.fetched ? "Homepage scan succeeded: " + (brandSignals.finalUrl || input.website) : "Homepage scan did not succeed.",
+    brandSignals?.pageTitle ? "Page title: " + brandSignals.pageTitle : "Page title: unavailable",
+    brandSignals?.metaDescription ? "Meta description: " + brandSignals.metaDescription : "Meta description: unavailable",
+    "Detected colour tokens (frequency-weighted): " + (brandSignals?.colors?.map((item) => item.value + " x" + item.count).join(", ") || "none detected"),
+    "Detected font-family signals (frequency-weighted): " + (brandSignals?.fonts?.map((item) => item.value + " x" + item.count).join(", ") || "none detected"),
+    "CSS files scanned: " + String(brandSignals?.cssFilesScanned || 0),
+    "Scanner note: " + (brandSignals?.note || "No direct scanner note."),
+    "Treat these as technical evidence from the public site, not automatically as formal brand guidelines. Prefer recurring values and cross-check them against the live site/search evidence.",
     "",
     "RESEARCH METHOD",
     "1. Use live web research. Treat the hotel's official website as the primary source for hotel facts whenever available.",
@@ -43,6 +54,6 @@ export function buildResearchPrompt(input: ResearchRequest) {
     "- A commercially intelligent category matrix with explicit conflict logic.",
     "- A recommended guide architecture and detailed flatplan.",
     "- A short unresolved-questions section for facts the Strictons team should verify with the hotel.",
-    "- Sources must be real URLs discovered during research. Do not invent citations."
+    "- Sources must be real URLs discovered during research. Do not invent citations.",
   ].join("\n");
 }
