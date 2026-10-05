@@ -21,7 +21,7 @@ The core principle is to keep **facts, inference and recommendations separate** 
 1. Import this GitHub repository into Vercel.
 2. Add an environment variable named `OPENAI_API_KEY` with your OpenAI API key.
 3. Optional: add `OPENAI_MODEL` to override the default model (`gpt-5.5`).
-4. Deploy.
+4. For an internal tool, enable Vercel deployment protection or another access-control layer so the research endpoint cannot be used publicly against your API key.\n5. Deploy.
 
 No database is required for the MVP. Saved briefs are stored in the browser's local storage, and each report can be exported as JSON or printed/saved as a PDF.
 
@@ -37,7 +37,7 @@ Then open `http://localhost:3000`.
 
 ## How research works
 
-The server route uses the OpenAI Responses API with the hosted web-search tool and a strict JSON schema. It is instructed to prioritise the hotel's official website for hotel facts, research the surrounding destination, preserve uncertainty, and build Strictons-specific commercial conflict logic rather than generic travel recommendations.
+The server first attempts a direct scan of the hotel's public homepage and same-host CSS to surface recurring colour and font-family signals. It then uses the OpenAI Responses API with the hosted web-search tool and a strict JSON schema. It is instructed to prioritise the hotel's official website for hotel facts, research the surrounding destination, preserve uncertainty, and build Strictons-specific commercial conflict logic rather than generic travel recommendations.
 
 Two research depths are available:
 
