@@ -1,6 +1,7 @@
 import OpenAI from "openai";
 import { NextResponse } from "next/server";
 import { buildResearchPrompt } from "@/lib/prompt";
+import { scanBrandSignals } from "@/lib/brand-scan";
 import { researchSchema } from "@/lib/schema";
 import type { ResearchRequest } from "@/lib/types";
 
@@ -43,6 +44,8 @@ export async function POST(request: Request) {
       depth: body.depth === "deep" ? "deep" : "standard",
     };
 
+    const brandSignals = await scanBrandSignals(input.website);
+
     const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
     const model = process.env.OPENAI_MODEL || "gpt-5.5";
 
@@ -62,7 +65,7 @@ export async function POST(request: Request) {
           content:
             "You are a rigorous hospitality research strategist. Search before making factual claims, preserve uncertainty, and produce the requested structured report.",
         },
-        { role: "user", content: buildResearchPrompt(input) },
+        { role: "user", content: buildResearchPrompt(input, brandSignals) },
       ],
       text: {
         format: {
